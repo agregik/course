@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Форма комнаты</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #3f51b5;
+      --secondary-color: #f5f5f5;
+      --accent-color: #ff4081;
+      --text-color: #333333;
+      --light-gray: #e0e0e0;
+    }
+
+    body {
+      background-color: var(--secondary-color);
+      font-family: 'Roboto', 'Arial', sans-serif;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .form-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .form-title {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control {
+      border: 1px solid var(--light-gray);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+      outline: none;
+    }
+
+    .text-danger {
+      color: #f44336 !important;
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 8px;
+      width: 100%;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #303f9f;
+      border-color: #303f9f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      color: var(--accent-color);
+    }
+
+    @media (max-width: 576px) {
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <div class="form-header">
+    <h2 class="form-title" th:text="${room.id} ? 'Редактировать комнату' : 'Добавить комнату'">Добавить комнату</h2>
+  </div>
+
+  <form th:action="@{/rooms}" th:object="${room}" method="post">
+    <input type="hidden" th:field="*{id}"/>
+
+    <div class="form-group">
+      <label for="number" class="form-label">Номер комнаты</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-house-door"></i></span>
+        <input type="text" th:field="*{number}" id="number" class="form-control" required placeholder="Введите номер комнаты"/>
+      </div>
+      <span th:if="${#fields.hasErrors('number')}" th:errors="*{number}" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="floor" class="form-label">Этаж</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-building"></i></span>
+        <input type="number" th:field="*{floor}" id="floor" class="form-control" required min="1" max="20" placeholder="Введите номер этажа"/>
+      </div>
+      <span th:if="${#fields.hasErrors('floor')}" th:errors="*{floor}" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+      <label for="capacity" class="form-label">Вместимость</label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-people"></i></span>
+        <input type="number" th:field="*{capacity}" id="capacity" class="form-control" required min="1" max="10" placeholder="Введите количество мест"/>
+      </div>
+      <span th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-save"></i> Сохранить
+    </button>
+
+    <a href="/rooms" class="back-link">
+      <i class="bi bi-arrow-left"></i> Вернуться к списку комнат
+    </a>
+  </form>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

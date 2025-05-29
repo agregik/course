@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Регистрация</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #3f51b5;
+      --secondary-color: #f5f5f5;
+      --accent-color: #ff4081;
+      --text-color: #333333;
+      --light-gray: #e0e0e0;
+      --success-color: #4caf50;
+      --warning-color: #ff9800;
+    }
+
+    body {
+      background-color: var(--secondary-color);
+      font-family: 'Roboto', 'Arial', sans-serif;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 0;
+    }
+
+    .register-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 600px;
+      margin: 1rem;
+    }
+
+    .register-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .register-title {
+      color: var(--primary-color);
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid var(--light-gray);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+      outline: none;
+    }
+
+    .input-group-text {
+      background-color: var(--primary-color);
+      color: white;
+      border: 1px solid var(--primary-color);
+      border-radius: 8px 0 0 8px;
+    }
+
+    .input-group .form-control {
+      border-radius: 0 8px 8px 0;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 8px;
+      width: 100%;
+      margin-top: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #303f9f;
+      border-color: #303f9f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .alert {
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border: none;
+    }
+
+    .alert-danger {
+      background-color: #ffebee;
+      color: #c62828;
+    }
+
+    .role-fields {
+      display: none;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      border-left: 4px solid var(--primary-color);
+    }
+
+    .role-fields.active {
+      display: block;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .role-fields h5 {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .role-fields h5 i {
+      margin-right: 0.5rem;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 1.5rem;
+    }
+
+    .login-link a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    .faculty-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      margin: 0.25rem;
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .register-container {
+        padding: 1.5rem;
+        margin: 0.5rem;
+      }
+
+      .register-title {
+        font-size: 1.5rem;
+      }
+
+      .role-fields {
+        padding: 1rem;
+      }
+    }
+
+    /* Стили для select с иконками */
+    .form-select {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px 12px;
+    }
+
+    /* Анимация для полей формы */
+    .form-group {
+      opacity: 0;
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .form-group:nth-child(1) { animation-delay: 0.1s; }
+    .form-group:nth-child(2) { animation-delay: 0.2s; }
+    .form-group:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="register-container">
+  <div class="register-header">
+    <h2 class="register-title">
+      <i class="bi bi-person-plus"></i> Регистрация в системе
+    </h2>
+    <p class="text-muted">Создайте новый аккаунт для доступа к системе общежития</p>
+  </div>
+
+  <!-- Показываем ошибку, если есть -->
+  <div th:if="${error}" class="alert alert-danger" role="alert">
+    <i class="bi bi-exclamation-triangle"></i>
+    <span th:text="${error}"></span>
+  </div>
+
+  <form th:action="@{/register}" method="post">
+    <!-- Основные поля -->
+    <div class="form-group">
+      <label for="username" class="form-label">
+        <i class="bi bi-person"></i> Логин
+      </label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-person"></i></span>
+        <input type="text" id="username" name="username" class="form-control" required placeholder="Введите логин"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="password" class="form-label">
+        <i class="bi bi-lock"></i> Пароль
+      </label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+        <input type="password" id="password" name="password" class="form-control" required placeholder="Введите пароль"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="role" class="form-label">
+        <i class="bi bi-shield-check"></i> Роль
+      </label>
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-shield-check"></i></span>
+        <select id="role" name="role" class="form-select" required onchange="showRoleFields()">
+          <option value="">Выберите роль</option>
+          <option value="STUDENT">👨‍🎓 Студент</option>
+          <option value="COMMANDANT">👨‍💼 Комендант</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Поля для студента -->
+    <div id="student-fields" class="role-fields">
+      <h5><i class="bi bi-mortarboard"></i> Данные студента</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="student-firstName" class="form-label">Имя</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" id="student-firstName" name="firstName" class="form-control" placeholder="Введите имя"/>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="student-lastName" class="form-label">Фамилия</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" id="student-lastName" name="lastName" class="form-control" placeholder="Введите фамилию"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="snils" class="form-label">СНИЛС</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+              <input type="text" id="snils" name="snils" class="form-control" placeholder="XXX-XXX-XXX XX"/>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="passport" class="form-label">Паспорт</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+              <input type="text" id="passport" name="passport" class="form-control" placeholder="XXXX XXXXXX"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="student-phone" class="form-label">Телефон</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+              <input type="text" id="student-phone" name="phone" class="form-control" placeholder="+7XXXXXXXXXX"/>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="faculty" class="form-label">Факультет</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-building"></i></span>
+              <select id="faculty" name="faculty" class="form-select">
+                <option value="">Выберите факультет</option>
+                <option value="Информатики">💻 Информатики</option>
+                <option value="Экономики">💰 Экономики</option>
+                <option value="Юридический">⚖️ Юридический</option>
+                <option value="Медицинский">🏥 Медицинский</option>
+                <option value="Технический">🔧 Технический</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Поля для коменданта -->
+    <div id="commandant-fields" class="role-fields">
+      <h5><i class="bi bi-person-badge"></i> Данные коменданта</h5>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="commandant-firstName" class="form-label">Имя</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" id="commandant-firstName" name="firstName" class="form-control" placeholder="Введите имя"/>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="commandant-lastName" class="form-label">Фамилия</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-person"></i></span>
+              <input type="text" id="commandant-lastName" name="lastName" class="form-control" placeholder="Введите фамилию"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="commandant-phone" class="form-label">Телефон</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+              <input type="text" id="commandant-phone" name="phone" class="form-control" placeholder="+7XXXXXXXXXX"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+      <i class="bi bi-person-plus"></i> Зарегистрироваться
+    </button>
+  </form>
+
+  <div class="login-link">
+    <p>Уже есть аккаунт? <a href="/login"><i class="bi bi-box-arrow-in-right"></i> Войти</a></p>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function showRoleFields() {
+    const role = document.getElementById('role').value;
+    const studentFields = document.getElementById('student-fields');
+    const commandantFields = document.getElementById('commandant-fields');
+
+    // Скрываем все поля
+    studentFields.classList.remove('active');
+    commandantFields.classList.remove('active');
+
+    // Показываем нужные поля в зависимости от роли
+    if (role === 'STUDENT') {
+        studentFields.classList.add('active');
+        // Очищаем поля коменданта
+        document.getElementById('commandant-firstName').value = '';
+        document.getElementById('commandant-lastName').value = '';
+        document.getElementById('commandant-phone').value = '';
+    } else if (role === 'COMMANDANT') {
+        commandantFields.classList.add('active');
+        // Очищаем поля студента
+        document.getElementById('student-firstName').value = '';
+        document.getElementById('student-lastName').value = '';
+        document.getElementById('student-phone').value = '';
+        document.getElementById('snils').value = '';
+        document.getElementById('passport').value = '';
+        document.getElementById('faculty').value = '';
+    }
+}
+
+// Анимация появления формы
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.register-container');
+    container.style.opacity = '0';
+    container.style.transform = 'translateY(20px)';
+
+    setTimeout(() => {
+        container.style.transition = 'all 0.5s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+    }, 100);
+
+    // Валидация формы
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const role = document.getElementById('role').value;
+
+        if (role === 'STUDENT') {
+            const firstName = document.getElementById('student-firstName').value;
+            const lastName = document.getElementById('student-lastName').value;
+
+            if (!firstName || !lastName) {
+                e.preventDefault();
+                showAlert('Пожалуйста, заполните имя и фамилию студента', 'warning');
+                return;
+            }
+        } else if (role === 'COMMANDANT') {
+            const firstName = document.getElementById('commandant-firstName').value;
+            const lastName = document.getElementById('commandant-lastName').value;
+
+            if (!firstName || !lastName) {
+                e.preventDefault();
+                showAlert('Пожалуйста, заполните имя и фамилию коменданта', 'warning');
+                return;
+            }
+        }
+    });
+
+    // Маски для полей ввода
+    const snilsInput = document.getElementById('snils');
+    const passportInput = document.getElementById('passport');
+    const phoneInputs = document.querySelectorAll('input[name="phone"]');
+
+    // Маска для СНИЛС
+    if (snilsInput) {
+        snilsInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 3) value = value.substring(0, 3) + '-' + value.substring(3);
+            if (value.length >= 7) value = value.substring(0, 7) + '-' + value.substring(7);
+            if (value.length >= 11) value = value.substring(0, 11) + ' ' + value.substring(11, 13);
+            e.target.value = value;
+        });
+    }
+
+    // Маска для паспорта
+    if (passportInput) {
+        passportInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 4) value = value.substring(0, 4) + ' ' + value.substring(4, 10);
+            e.target.value = value;
+        });
+    }
+
+    // Маска для телефона
+    phoneInputs.forEach(input => {
+        input.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('8')) value = '7' + value.substring(1);
+            if (value.startsWith('7')) {
+                value = '+7' + value.substring(1);
+                if (value.length >= 5) value = value.substring(0, 5) + value.substring(5);
+            }
+            e.target.value = value;
+        });
+    });
+});
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        <i class="bi bi-exclamation-triangle"></i>
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+
+    const form = document.querySelector('form');
+    form.parentNode.insertBefore(alertDiv, form);
+
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
+
+// Подсветка активных полей
+document.querySelectorAll('.form-control, .form-select').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.parentNode.style.transform = 'scale(1.02)';
+        this.parentNode.style.transition = 'transform 0.2s ease';
+    });
+
+    input.addEventListener('blur', function() {
+        this.parentNode.style.transform = 'scale(1)';
+    });
+});
+</script>
+
+</body>
+</html>

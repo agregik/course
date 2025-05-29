@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Об авторе</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <style>
+    :root {
+      --primary-color: #3f51b5;
+      --secondary-color: #f5f5f5;
+      --accent-color: #ff4081;
+      --text-color: #333333;
+      --light-gray: #e0e0e0;
+    }
+
+    body {
+      background-color: var(--secondary-color);
+      font-family: 'Roboto', 'Arial', sans-serif;
+      color: var(--text-color);
+      padding-bottom: 2rem;
+    }
+
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 1rem;
+    }
+
+    .navbar-brand {
+      color: white !important;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.85) !important;
+      font-weight: 500;
+      margin: 0 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: white !important;
+      transform: translateY(-2px);
+    }
+
+    .about-card {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 2.5rem;
+      margin-top: 3rem;
+    }
+
+    .about-title {
+      color: var(--primary-color);
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      position: relative;
+      display: inline-block;
+    }
+
+    .about-title:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -10px;
+      width: 50px;
+      height: 4px;
+      background-color: var(--accent-color);
+      border-radius: 2px;
+    }
+
+    .about-text {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    .contact-link {
+      color: var(--primary-color);
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .contact-link:hover {
+      color: var(--accent-color);
+    }
+
+    .author-info {
+      display: flex;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--light-gray);
+    }
+
+    .author-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: var(--primary-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    .author-details {
+      flex: 1;
+    }
+
+    .author-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .author-role {
+      color: #777;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .about-card {
+        padding: 1.5rem;
+      }
+
+      .about-title {
+        font-size: 1.6rem;
+      }
+
+      .about-text {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="/">Общежитие ВУЗа</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/rooms"><i class="bi bi-house-door"></i> Комнаты</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/students"><i class="bi bi-people"></i> Студенты</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/accommodations"><i class="bi bi-building"></i> Заселения</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/about"><i class="bi bi-info-circle"></i> Об авторе</a>
+        </li>
+        <li class="nav-item">
+          <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; color: rgba(255, 255, 255, 0.85) !important; font-weight: 500; margin: 0 0.5rem; transition: all 0.3s ease;">
+              <i class="bi bi-box-arrow-right"></i> Выйти
+            </button>
+          </form>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="about-card">
+        <h2 class="about-title">Об авторе</h2>
+
+        <p class="about-text">
+          Этот сервис разработан для упрощения управления общежитием ВУЗа.
+          Я-Боков Никита Евгеньевич и я создал этот проект, чтобы помочь студентам и администраторам эффективно организовывать проживание.
+        </p>
+
+        <p class="about-text">
+          Система позволяет управлять комнатами, студентами и заселениями в удобном интерфейсе. Вы можете легко добавлять, редактировать и удалять записи, а также просматривать всю необходимую информацию.
+        </p>
+
+        <p class="about-text">
+          Если у вас есть вопросы или предложения, свяжитесь со мной через
+          <a href="https://t.me/agregeg" class="contact-link" target="_blank">
+            <i class="bi bi-telegram"></i> telegram @agregeg
+          </a>.
+        </p>
+
+        <div class="author-info">
+          <div class="author-avatar">
+            <i class="bi bi-person"></i>
+          </div>
+          <div class="author-details">
+            <div class="author-name">Боков Никита Евгеньевич</div>
+            <div class="author-role">Разработчик системы управления общежитием</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

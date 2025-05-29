@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Статистика</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --secondary-color: #f5f5f5;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --info-color: #2196f3;
+            --text-color: #333333;
+            --light-gray: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--secondary-color);
+            font-family: 'Roboto', 'Arial', sans-serif;
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 0.8rem 1rem;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.85) !important;
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            margin-top: 2rem;
+            padding: 0 1rem;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, rgba(63, 81, 181, 0.05) 0%, rgba(63, 81, 181, 0.1) 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-card.students {
+            border-left-color: var(--info-color);
+        }
+
+        .stat-card.rooms {
+            border-left-color: var(--success-color);
+        }
+
+        .stat-card.capacity {
+            border-left-color: var(--warning-color);
+        }
+
+        .stat-card.occupancy {
+            border-left-color: var(--danger-color);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .stat-icon.students { background-color: var(--info-color); }
+        .stat-icon.rooms { background-color: var(--success-color); }
+        .stat-icon.capacity { background-color: var(--warning-color); }
+        .stat-icon.occupancy { background-color: var(--danger-color); }
+
+        .stat-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .stat-detail {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-detail-number {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-detail-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .progress-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .progress-item {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .progress {
+            height: 12px;
+            border-radius: 6px;
+            background-color: #f0f0f0;
+        }
+
+        .progress-bar {
+            border-radius: 6px;
+            transition: width 0.6s ease;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .stat-details {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Общежитие ВУЗа</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/rooms"><i class="bi bi-house-door"></i> Комнаты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/students"><i class="bi bi-people"></i> Студенты</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/accommodations"><i class="bi bi-building"></i> Заселения</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/statistics"><i class="bi bi-graph-up"></i> Статистика</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about"><i class="bi bi-info-circle"></i> Об авторе</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; color: rgba(255, 255, 255, 0.85) !important; font-weight: 500; margin: 0 0.5rem; transition: all 0.3s ease;">
+                            <i class="bi bi-box-arrow-right"></i> Выйти
+                        </button>
+                    </form>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-graph-up"></i> Статистика общежития
+        </h1>
+        <p class="lead">Общая информация о заселении и использовании комнат</p>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <!-- Students Statistics -->
+        <div class="stat-card students">
+            <div class="stat-header">
+                <div class="stat-icon students">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3 class="stat-title">Студенты</h3>
+            </div>
+            <div class="stat-number text-info" th:text="${statistics.totalStudents}">0</div>
+            <div class="stat-details">
+                <div class="stat-detail">
+                    <div class="stat-detail-number text-success" th:text="${statistics.accommodatedStudents}">0</div>
+                    <div class="stat-detail-label">Заселено</div>
+                </div>
+                <div class="stat-detail">
+                    <div class="stat-detail-number text-warning" th:text="${statistics.unaccommodatedStudents}">0</div>
+                    <div class="stat-detail-label">Не заселено</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rooms Statistics -->
+        <div class="stat-card rooms">
+            <div class="stat-header">
+                <div class="stat-icon rooms">
+                    <i class="bi bi-house-door"></i>
+                </div>
+                <h3 class="stat-title">Комнаты</h3>
+            </div>
+            <div class="stat-number text-success" th:text="${statistics.totalRooms}">0</div>
+            <div class="stat-details">
+                <div class="stat-detail">
+                    <div class="stat-detail-number text-danger" th:text="${statistics.occupiedRooms}">0</div>
+                    <div class="stat-detail-label">Занято</div>
+                </div>
+                <div class="stat-detail">
+                    <div class="stat-detail-number text-success" th:text="${statistics.freeRooms}">0</div>
+                    <div class="stat-detail-label">Свободно</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capacity Statistics -->
+        <div class="stat-card capacity">
+            <div class="stat-header">
+                <div class="stat-icon capacity">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h3 class="stat-title">Вместимость</h3>
+            </div>
+            <div class="stat-number text-warning" th:text="${statistics.totalCapacity}">0</div>
+            <div class="stat-details">
+                <div class="stat-detail">
+                    <div class="stat-detail-number text-danger" th:text="${statistics.occupiedCapacity}">0</div>
+                    <div class="stat-detail-label">Занято мест</div>
+                </div>
+                <div class="stat-detail">
+                    <div class="stat-detail-number text-success" th:text="${statistics.freeCapacity}">0</div>
+                    <div class="stat-detail-label">Свободно мест</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Occupancy Rate -->
+        <div class="stat-card occupancy">
+            <div class="stat-header">
+                <div class="stat-icon occupancy">
+                    <i class="bi bi-percent"></i>
+                </div>
+                <h3 class="stat-title">Заполненность</h3>
+            </div>
+            <div class="stat-number text-danger">
+                <span th:text="${#numbers.formatDecimal(statistics.occupancyRate, 1, 1)}">0.0</span>%
+            </div>
+            <div class="progress mt-3">
+                <div class="progress-bar bg-danger"
+                     role="progressbar"
+                     th:style="'width: ' + ${statistics.occupancyRate} + '%'"
+                     th:aria-valuenow="${statistics.occupancyRate}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+        <h3 class="progress-title">
+            <i class="bi bi-bar-chart"></i> Детальная статистика
+        </h3>
+
+        <div class="progress-item">
+            <div class="progress-label">
+                <span>Заселенность студентов</span>
+                <span>
+                    <span th:text="${statistics.accommodatedStudents}">0</span> из
+                    <span th:text="${statistics.totalStudents}">0</span>
+                    (<span th:text="${statistics.totalStudents > 0 ? #numbers.formatDecimal(statistics.accommodatedStudents * 100.0 / statistics.totalStudents, 1, 1) : 0}">0</span>%)
+                </span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-info"
+                     role="progressbar"
+                     th:style="'width: ' + ${statistics.totalStudents > 0 ? (statistics.accommodatedStudents * 100.0 / statistics.totalStudents) : 0} + '%'">
+                </div>
+        </div>
+
+        <div class="progress-item">
+            <div class="progress-label">
+                <span>Занятость комнат</span>
+                <span>
+                    <span th:text="${statistics.occupiedRooms}">0</span> из
+                    <span th:text="${statistics.totalRooms}">0</span>
+                    (<span th:text="${statistics.totalRooms > 0 ? #numbers.formatDecimal(statistics.occupiedRooms * 100.0 / statistics.totalRooms, 1, 1) : 0}">0</span>%)
+                </span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-success"
+                     role="progressbar"
+                     th:style="'width: ' + ${statistics.totalRooms > 0 ? (statistics.occupiedRooms * 100.0 / statistics.totalRooms) : 0} + '%'">
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-item">
+            <div class="progress-label">
+                <span>Использование мест</span>
+                <span>
+                    <span th:text="${statistics.occupiedCapacity}">0</span> из
+                    <span th:text="${statistics.totalCapacity}">0</span>
+                    (<span th:text="${#numbers.formatDecimal(statistics.occupancyRate, 1, 1)}">0</span>%)
+                </span>
+            </div>
+            <div class="progress">
+                <div class="progress-bar bg-warning"
+                     role="progressbar"
+                     th:style="'width: ' + ${statistics.occupancyRate} + '%'">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-cards">
+        <div class="summary-card">
+            <div class="summary-number text-info" th:text="${statistics.totalStudents}">0</div>
+            <div class="summary-label">Всего студентов</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-success" th:text="${statistics.accommodatedStudents}">0</div>
+            <div class="summary-label">Заселено студентов</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-warning" th:text="${statistics.unaccommodatedStudents}">0</div>
+            <div class="summary-label">Ожидают заселения</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-primary" th:text="${statistics.totalRooms}">0</div>
+            <div class="summary-label">Всего комнат</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-danger" th:text="${statistics.occupiedRooms}">0</div>
+            <div class="summary-label">Занятых комнат</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-success" th:text="${statistics.freeRooms}">0</div>
+            <div class="summary-label">Свободных комнат</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-info" th:text="${statistics.totalCapacity}">0</div>
+            <div class="summary-label">Общая вместимость</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number text-warning" th:text="${statistics.freeCapacity}">0</div>
+            <div class="summary-label">Свободных мест</div>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-danger" th:if="${error}">
+        <i class="bi bi-exclamation-triangle"></i>
+        <span th:text="${error}">Ошибка загрузки данных</span>
+    </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript for animations -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Анимация появления карточек
+        const cards = document.querySelectorAll('.stat-card, .summary-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+
+        // Анимация прогресс-баров
+        setTimeout(() => {
+            const progressBars = document.querySelectorAll('.progress-bar');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.transition = 'width 1s ease-in-out';
+                    bar.style.width = width;
+                }, 500);
+            });
+        }, 800);
+    });
+</script>
+</div>
+</body>
+</html>

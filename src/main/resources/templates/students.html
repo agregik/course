@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Студенты</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+  <!-- Ваши стили остаются без изменений -->
+  <style>
+    /* Все ваши существующие стили */
+    :root {
+      --primary-color: #3f51b5;
+      --secondary-color: #f5f5f5;
+      --accent-color: #ff4081;
+      --text-color: #333333;
+      --light-gray: #e0e0e0;
+    }
+
+    body {
+      background-color: var(--secondary-color);
+      font-family: 'Roboto', 'Arial', sans-serif;
+      color: var(--text-color);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      background-color: var(--primary-color);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 0.8rem 1rem;
+    }
+
+    .navbar-brand {
+      color: white !important;
+      font-weight: 600;
+      font-size: 1.4rem;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.85) !important;
+      font-weight: 500;
+      margin: 0 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .nav-link:hover {
+      color: white !important;
+      transform: translateY(-2px);
+    }
+
+    .container {
+      margin-top: 2rem;
+      padding: 0 1rem;
+    }
+
+    .page-header {
+      background: linear-gradient(135deg, rgba(63, 81, 181, 0.05) 0%, rgba(63, 81, 181, 0.1) 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .page-title {
+      color: var(--primary-color);
+          font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border-radius: 50px;
+      box-shadow: 0 4px 10px rgba(63, 81, 181, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #303f9f;
+      border-color: #303f9f;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(63, 81, 181, 0.4);
+    }
+
+    /* Стили для фильтров */
+    .filters-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .filters-title {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .filters-title i {
+      margin-right: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid var(--light-gray);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.15);
+      outline: none;
+    }
+
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline-secondary {
+      color: #6c757d;
+      border-color: #6c757d;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-outline-secondary:hover {
+      background-color: #6c757d;
+      border-color: #6c757d;
+      transform: translateY(-2px);
+    }
+
+    .table-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+
+    .table {
+      margin-bottom: 0;
+    }
+
+    .table th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+      border: none;
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .table td {
+      padding: 1rem;
+      vertical-align: middle;
+      border-top: 1px solid var(--light-gray);
+      font-size: 0.9rem;
+    }
+
+    .table tbody tr:hover {
+      background-color: rgba(63, 81, 181, 0.05);
+      transition: all 0.3s ease;
+    }
+
+    .btn-warning, .btn-danger {
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin: 0.2rem;
+      border: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .btn-warning {
+      background-color: #ff9800;
+      color: white;
+    }
+
+    .btn-warning:hover {
+      background-color: #f57c00;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 152, 0, 0.3);
+    }
+
+    .btn-danger {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #d32f2f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(244, 67, 54, 0.3);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      color: var(--light-gray);
+      margin-bottom: 1rem;
+    }
+
+    .faculty-badge {
+      background-color: var(--primary-color);
+      color: white;
+      border-radius: 50px;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .results-info {
+      background-color: #e3f2fd;
+      border-left: 4px solid var(--primary-color);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .results-info .results-text {
+      color: var(--primary-color);
+      font-weight: 500;
+      margin: 0;
+    }
+
+    .search-highlight {
+      background-      background-color: #fff3cd;
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .table-responsive {
+        font-size: 0.8rem;
+      }
+
+      .btn-warning, .btn-danger {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.6rem;
+      }
+
+      .filters-container .row {
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">Общежитие ВУЗа</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/rooms"><i class="bi bi-house-door"></i> Комнаты</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/students"><i class="bi bi-people"></i> Студенты</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/statistics"><i class="bi bi-graph-up"></i> Статистика</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/accommodations"><i class="bi bi-building"></i> Заселения</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/about"><i class="bi bi-info-circle"></i> Об авторе</a>
+        </li>
+        <li class="nav-item">
+          <form th:action="@{/logout}" method="post" style="display: inline;">
+            <button type="submit" class="nav-link btn btn-link" style="border: none; background: none; color: rgba(255, 255, 255, 0.85) !important; font-weight: 500; margin: 0 0.5rem; transition: all 0.3s ease;">
+              <i class="bi bi-box-arrow-right"></i> Выйти
+            </button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container">
+  <!-- Success/Error Messages -->
+  <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+    <i class="bi bi-check-circle"></i>
+    <span th:text="${success}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle"></i>
+    <span th:text="${error}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1 class="page-title">
+      <i class="bi bi-people"></i> Управление студентами
+    </h1>
+    <p class="lead">Добавляйте, редактируйте и управляйте информацией о студентах общежития</p>
+    <a href="/students/new" class="btn btn-primary">
+      <i class="bi bi-person-plus"></i> Добавить студента
+    </a>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-container">
+    <h5 class="filters-title">
+      <i class="bi bi-funnel"></i> Фильтры и поиск
+    </h5>
+    <form method="get" action="/students">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label for="faculty" class="form-label">
+            <i class="bi bi-building"></i> Факультет
+          </label>
+          <select id="faculty" name="faculty" class="form-select">
+            <option value="">Все факультеты</option>
+            <option th:each="fac : ${faculties}"
+                    th:value="${fac}"
+                    th:text="${fac}"
+                    th:selected="${fac == selectedFaculty}">
+            </option>
+          </select>
+        </div>
+        <div class="col-md-5">
+          <label for="search" class="form-label">
+            <i class="bi bi-search"></i> Поиск по имени/фамилии
+          </label>
+          <input type="text"
+                 id="search"
+                 name="search"
+                 class="form-control"
+                 placeholder="Введите имя или фамилию..."
+                 th:value="${searchQuery}"/>
+        </div>
+        <div class="col-md-3">
+          <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-outline-primary flex-fill">
+              <i class="bi bi-search"></i> Найти
+            </button>
+            <a href="/students" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-clockwise"></i> Сбросить
+            </a>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Info -->
+  <div class="results-info" th:if="${selectedFaculty != null or searchQuery != null}">
+    <p class="results-text">
+      <i class="bi bi-info-circle"></i>
+      <span th:if="${selectedFaculty != null and searchQuery != null}">
+            Показаны студенты факультета "<strong th:text="${selectedFaculty}"></strong>"
+            с поиском "<strong th:text="${searchQuery}"></strong>":
+            найдено <strong th:text="${students.size()}"></strong> студент(ов)
+          </span>
+      <span th:if="${selectedFaculty != null and searchQuery == null}">
+            Показаны студенты факультета "<strong th:text="${selectedFaculty}"></strong>":
+            найдено <strong th:text="${students.size()}"></strong> студент(ов)
+          </span>
+      <span th:if="${selectedFaculty == null and searchQuery != null}">
+            Результаты поиска по запросу "<strong th:text="${searchQuery}"></strong>":
+            найдено <strong th:text="${students.size()}"></strong> студент(ов)
+          </span>
+    </p>
+  </div>
+
+  <!-- Students Table -->
+  <div class="table-container">
+    <div class="table-responsive">
+      <table class="table" th:if="${!students.empty}">
+        <thead>
+        <tr>
+          <th><i class="bi bi-person"></i> Имя</th>
+          <th><i class="bi bi-person-badge"></i> Фамилия</th>
+          <th><i class="bi bi-card-text"></i> СНИЛС</th>
+          <th><i class="bi bi-credit-card"></i> Паспорт</th>
+          <th><i class="bi bi-telephone"></i> Телефон</th>
+          <th><i class="bi bi-building"></i> Факультет</th>
+          <th><i class="bi bi-gear"></i> Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student : ${students}">
+          <td th:text="${student.firstName}"></td>
+          <td th:text="${student.lastName}"></td>
+          <td th:text="${student.snils}"></td>
+          <td th:text="${student.passport}"></td>
+          <td th:text="${student.phone}"></td>
+          <td>
+            <span class="faculty-badge" th:text="${student.faculty}"></span>
+          </td>
+          <td>
+            <a th:href="@{/students/edit/{id}(id=${student.id})}" class="btn btn-warning" title="Редактировать">
+              <i class="bi bi-pencil"></i> Редактировать
+            </a>
+            <a th:href="@{/students/delete/{id}(id=${student.id})}" class="btn btn-danger"
+               onclick="return confirm('Вы уверены, что хотите удалить студента? Это также удалит все связанные записи о размещении.')" title="Удалить">
+              <i class="bi bi-trash"></i> Удалить
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty State -->
+      <div class="empty-state" th:if="${students.empty}">
+        <i class="bi bi-people"></i>
+        <h3 th:if="${selectedFaculty != null or searchQuery != null}">Студенты не найдены</h3>
+        <h3 th:if="${selectedFaculty == null and searchQuery == null}">Студенты не найдены</h3>
+
+        <p th:if="${selectedFaculty != null or searchQuery != null}">
+          По вашему запросу ничего не найдено. Попробуйте изменить критерии поиска.
+        </p>
+        <p th:if="${selectedFaculty == null and searchQuery == null}">
+          Начните добавлять студентов в систему
+        </p>
+
+        <div class="d-flex gap-2 justify-content-center flex-wrap">
+          <a href="/students/new" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Добавить студента
+          </a>
+          <a href="/students" class="btn btn-outline-secondary" th:if="${selectedFaculty != null or searchQuery != null}">
+            <i class="bi bi-arrow-clockwise"></i> Показать всех
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom JavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Анимация появления элементов
+    const containers = document.querySelectorAll('.filters-container, .table-container, .results-info');
+    containers.forEach((container, index) => {
+      container.style.opacity = '0';
+      container.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        container.style.transition = 'all 0.5s ease';
+        container.style.opacity = '1';
+        container.style.transform = 'translateY(0)';
+      }, index * 100);
+    });
+
+    // Автофокус на поле поиска
+    const searchInput = document.getElementById('search');
+    if (searchInput && !searchInput.value) {
+      setTimeout(() => searchInput.focus(), 500);
+    }
+
+    // Подсветка активных фильтров
+    const facultySelect = document.getElementById('faculty');
+    const searchField = document.getElementById('search');
+
+    function updateFilterHighlight() {
+      const filtersContainer = document.querySelector('.filters-container');
+      const hasActiveFilters = facultySelect.value || searchField.value;
+
+      if (hasActiveFilters) {
+        filtersContainer.style.borderLeft = '4px solid var(--primary-color)';
+        filtersContainer.style.backgroundColor = '#f8f9ff';
+      } else {
+        filtersContainer.style.borderLeft = 'none';
+        filtersContainer.style.backgroundColor = 'white';
+      }
+    }
+
+    facultySelect.addEventListener('change', updateFilterHighlight);
+    searchField.addEventListener('input', updateFilterHighlight);
+    updateFilterHighlight();
+
+    // Обработка Enter в поле поиска
+    searchField.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.closest('form').submit();
+      }
+    });
+
+    // Очистка поиска по Escape
+    searchField.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        this.value = '';
+        updateFilterHighlight();
+      }
+    });
+
+    // Автоматическое скрытие уведомлений через 5 секунд
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+      setTimeout(() => {
+        if (alert.parentNode) {
+          alert.style.transition = 'opacity 0.5s ease';
+          alert.style.opacity = '0';
+          setTimeout(() => {
+            if (alert.parentNode) {
+              alert.remove();
+            }
+          }, 500);
+        }
+      }, 5000);
+    });
+  });
+</script>
+</body>
+</html>
+
